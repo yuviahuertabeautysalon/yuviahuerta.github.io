@@ -1767,7 +1767,7 @@ function renderSvcPreview(){
   const svcs = activeServices();
   if(!svcs.length){ $('#svc-preview').innerHTML='<p style="color:rgba(58,42,28,.4);font-size:12px;text-align:center;padding:20px">No hay servicios activos</p>'; return; }
   $('#svc-preview').innerHTML = svcs.map((s,i)=>{
-    const tag = s.price >= 200 ? '<div class="svc-tag">Premium</div>' : '';
+    const tag = '';
     return '<div class="svc-card reveal reveal-d'+Math.min(i,4)+'" data-svc-card="'+s.id+'"><div class="svc-card-inner">'+tag+(s.img?'<div class="svc-icon photo"><img src="'+s.img+'" alt="">'+'</div>':'<div class="svc-icon">'+getSvcIcon(s.id)+'</div>')+'<div class="svc-body"><div class="svc-row"><div><div class="svc-name">'+s.name+'</div><div class="svc-meta">'+s.duration+' min</div></div><div class="svc-pr">'+fmt(s.price)+'<small>CAD</small></div></div><div class="svc-d">'+(s.desc||'')+'</div><div class="svc-cta">Reservar →</div></div></div></div>';
   }).join('');
   $$('[data-svc-card]').forEach(el=>el.addEventListener('click',()=>{
