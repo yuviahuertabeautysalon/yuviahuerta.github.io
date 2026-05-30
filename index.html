@@ -1444,6 +1444,11 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
       <div id="gal-editor" style="margin-top:14px"></div>
     </section>
     <section class="sec" data-as="settings">
+      <div class="card" id="cloud-card" style="border-color:rgba(168,129,74,.35)">
+        <div class="card-h"><h4>☁ Sincronización en la nube</h4><small id="cloud-status">No conectado</small></div>
+        <p style="font-size:12.5px;color:var(--text-2);line-height:1.6;margin:0 0 12px">Conecta tu base de datos gratuita para que los servicios, fotos, galería y citas se guarden de forma permanente y se vean en <b>todos los dispositivos</b> de tus clientas.</p>
+        <button class="btn btn-gold" id="cloud-btn" style="width:100%">Conectar / Configurar nube</button>
+      </div>
       <div class="card">
         <div class="card-h"><h4>Información del salón</h4><button class="btn btn-g btn-sm" id="info-edit">Editar</button></div>
         <div id="info-display">
@@ -3416,6 +3421,122 @@ if(_expAdd) _expAdd.addEventListener('click', showAddExpense);
 const _blockAdd = document.getElementById('block-add');
 if(_blockAdd) _blockAdd.addEventListener('click', showAddBlock);
 
+/* ===== CLOUD SYNC (Firebase Firestore) ===== */
+let _fbApp=null, _fbDb=null, _fbFs=null, fbStatus='off';
+const DEFAULT_FB={apiKey:"AIzaSyC9OaifNgowpa_UqANa_iXU_uotJTllw48",authDomain:"yuvia-beauty.firebaseapp.com",projectId:"yuvia-beauty",storageBucket:"yuvia-beauty.firebasestorage.app",messagingSenderId:"55028328330"};
+function getFbCfg(){ try{ const c=JSON.parse(localStorage.getItem('yh:fbcfg')||'null'); if(c&&c.projectId) return c; }catch(e){} return DEFAULT_FB; }
+function setFbCfg(c){ try{ localStorage.setItem('yh:fbcfg', JSON.stringify(c)); }catch(e){} }
+const LS_KEY={services:'yh:services',staff:'yh:staff',gallery:'yh:gallery',bookings:'yh:bookings',reviews:'yh:reviews',expenses:'yh:expenses',blocks:'yh:blocks'};
+const FB_COLS=[
+  ['services',()=>SERVICES,a=>{SERVICES=a;}],
+  ['staff',()=>STAFF,a=>{STAFF=a;}],
+  ['gallery',()=>gallery,a=>{gallery=a;}],
+  ['bookings',()=>bookings,a=>{bookings=a;}],
+  ['reviews',()=>reviews,a=>{reviews=a;}],
+  ['expenses',()=>expenses,a=>{expenses=a;}],
+  ['blocks',()=>blocks,a=>{blocks=a;}]
+];
+function colGet(name){ const c=FB_COLS.find(x=>x[0]===name); return c?c[1]():[]; }
+function persistLocal(name){ try{ localStorage.setItem(LS_KEY[name], JSON.stringify(colGet(name))); }catch(e){} }
+function rerenderAll(){ try{
+  if(typeof renderSvcPreview==='function') renderSvcPreview();
+  if(typeof renderSvcPick==='function') renderSvcPick();
+  if(typeof renderSpecPick==='function') renderSpecPick();
+  if(typeof renderGallery==='function') renderGallery();
+  if(typeof renderAboutTeam==='function') renderAboutTeam();
+  if(typeof renderAboutPortrait==='function') renderAboutPortrait();
+  if(typeof renderMy==='function') renderMy();
+  if(typeof refreshUrgency==='function') refreshUrgency();
+  if(typeof wireCustomerLinks==='function') wireCustomerLinks();
+  if(typeof renderInfo==='function') renderInfo();
+  if(adminLoggedIn && typeof renderAdmin==='function') renderAdmin();
+}catch(e){} }
+function updateCloudStatus(msg){
+  const el=document.getElementById('cloud-status'); const card=document.getElementById('cloud-card');
+  if(!el) return;
+  const map={off:['No conectado','var(--text-4)'],connecting:['Conectando…','var(--gold-deep)'],on:['✓ Conectado · sincronizando','var(--green)'],error:['Error: '+(msg||'revisa la configuración'),'var(--red)']};
+  const m=map[fbStatus]||map.off; el.textContent=m[0]; el.style.color=m[1];
+  if(card) card.style.borderColor = fbStatus==='on' ? 'rgba(63,155,120,.4)' : 'rgba(168,129,74,.35)';
+}
+async function pushCol(name){
+  if(!_fbDb||!_fbFs) return;
+  const fs=_fbFs, arr=colGet(name);
+  try{
+    arr.forEach((x,i)=>{ if(x.id==null) x.id=name+'_'+Date.now()+'_'+i; });
+    const batch=fs.writeBatch(_fbDb);
+    const existing=await fs.getDocs(fs.collection(_fbDb,name));
+    const ids=new Set(arr.map(x=>String(x.id)));
+    existing.forEach(d=>{ if(!ids.has(d.id)) batch.delete(d.ref); });
+    arr.forEach(x=>{ batch.set(fs.doc(_fbDb,name,String(x.id)), JSON.parse(JSON.stringify(x))); });
+    await batch.commit();
+  }catch(e){ updateCloudStatus(e.message); }
+}
+async function pushInfo(){ if(!_fbDb||!_fbFs) return; try{ await _fbFs.setDoc(_fbFs.doc(_fbDb,'salon','info'), JSON.parse(JSON.stringify(INFO))); }catch(e){ updateCloudStatus(e.message); } }
+async function pullAll(){
+  const fs=_fbFs;
+  try{
+    const infoSnap=await fs.getDoc(fs.doc(_fbDb,'salon','info'));
+    if(infoSnap.exists()){ INFO={...INFO,...infoSnap.data()}; try{localStorage.setItem('yh:info',JSON.stringify(INFO));}catch(e){} }
+    else { await pushInfo(); }
+  }catch(e){}
+  for(const [name,get,set] of FB_COLS){
+    try{
+      const snap=await fs.getDocs(fs.collection(_fbDb,name));
+      if(snap.empty){ if(get().length) await pushCol(name); }
+      else { const arr=[]; snap.forEach(d=>arr.push(d.data())); set(arr); persistLocal(name); }
+    }catch(e){}
+  }
+  rerenderAll();
+}
+async function initCloud(){
+  const cfg=getFbCfg(); if(!cfg||!cfg.projectId){ fbStatus='off'; updateCloudStatus(); return; }
+  fbStatus='connecting'; updateCloudStatus();
+  try{
+    const appMod=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const fs=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    _fbFs=fs; _fbApp=appMod.initializeApp(cfg); _fbDb=fs.getFirestore(_fbApp);
+    await pullAll();
+    FB_COLS.forEach(([name,get,set])=>{
+      fs.onSnapshot(fs.collection(_fbDb,name),(snap)=>{
+        const arr=[]; snap.forEach(d=>arr.push(d.data())); set(arr); persistLocal(name); rerenderAll();
+      },(err)=>{ updateCloudStatus(err.message); });
+    });
+    fs.onSnapshot(fs.doc(_fbDb,'salon','info'),(d)=>{ if(d.exists()){ INFO={...INFO,...d.data()}; try{localStorage.setItem('yh:info',JSON.stringify(INFO));}catch(e){} if(typeof renderInfo==='function')renderInfo(); if(typeof wireCustomerLinks==='function')wireCustomerLinks(); if(typeof renderAboutPortrait==='function')renderAboutPortrait(); } });
+    fbStatus='on'; updateCloudStatus();
+  }catch(e){ fbStatus='error'; updateCloudStatus(e&&e.message); }
+}
+function showCloudModal(){
+  const cur=getFbCfg();
+  document.getElementById('modal-content').innerHTML = '<h3>Conectar <i>nube</i></h3><p class="ct">Pega aquí el código de configuración de Firebase (lo obtienes al crear tu proyecto gratuito).</p><div class="form"><div class="fld"><label>Configuración de Firebase</label><textarea id="fb-cfg" style="min-height:150px;font-family:monospace;font-size:12px" placeholder=\'{ "apiKey": "…", "authDomain": "…", "projectId": "…", "storageBucket": "…", "messagingSenderId": "…", "appId": "…" }\'>'+(cur?JSON.stringify(cur,null,2):'')+'</textarea></div></div><p style="font-size:11px;color:var(--text-3);line-height:1.5;margin:6px 0 0">Pega el objeto que te da Firebase (con apiKey, projectId, etc.). Puedes pegar también el bloque completo <b>const firebaseConfig = {…}</b>.</p><div class="modal-act"><button class="btn btn-g btn-sm" id="fb-no" style="background:rgba(74,54,38,.05);flex:1">Cancelar</button>'+(cur?'<button class="btn btn-g btn-sm" id="fb-clear" style="flex:1">Desconectar</button>':'')+'<button class="btn btn-gold btn-sm" id="fb-save" style="flex:2">Guardar y conectar</button></div>';
+  document.getElementById('modal').classList.add('on');
+  document.getElementById('fb-no').addEventListener('click',closeModal);
+  const clr=document.getElementById('fb-clear'); if(clr) clr.addEventListener('click',()=>{ localStorage.removeItem('yh:fbcfg'); closeModal(); toast('Nube desconectada'); setTimeout(()=>location.reload(),300); });
+  document.getElementById('fb-save').addEventListener('click',()=>{
+    let raw=(document.getElementById('fb-cfg').value||'').trim();
+    if(!raw){ toast('Pega la configuración',true); return; }
+    let cfg=null;
+    try{ cfg=JSON.parse(raw); }catch(e){
+      try{ const m=raw.slice(raw.indexOf('{'), raw.lastIndexOf('}')+1); cfg=(new Function('return ('+m+')'))(); }catch(e2){ cfg=null; }
+    }
+    if(!cfg||!cfg.projectId||!cfg.apiKey){ toast('Configuración inválida — revisa que tenga apiKey y projectId',true); return; }
+    setFbCfg(cfg); closeModal(); toast('Conectando a la nube…'); fbStatus='connecting'; updateCloudStatus();
+    initCloud();
+  });
+}
+{ const cb=document.getElementById('cloud-btn'); if(cb) cb.addEventListener('click', showCloudModal); }
+/* wrap saves to also push to cloud */
+(function(){
+  const wrap=(origName, getOrig, pushFn)=>{};
+  const _saveS=saveS; saveS=function(){ _saveS.apply(this,arguments); if(_fbDb) pushCol('services'); };
+  const _saveT=saveT; saveT=function(){ _saveT.apply(this,arguments); if(_fbDb) pushCol('staff'); };
+  const _saveB=saveB; saveB=function(){ _saveB.apply(this,arguments); if(_fbDb) pushCol('bookings'); };
+  const _saveI=saveI; saveI=function(){ _saveI.apply(this,arguments); if(_fbDb) pushInfo(); };
+  if(typeof saveGallery==='function'){ const _g=saveGallery; saveGallery=function(){ const r=_g.apply(this,arguments); if(_fbDb) pushCol('gallery'); return r; }; }
+  if(typeof saveReviews==='function'){ const _r=saveReviews; saveReviews=function(){ _r.apply(this,arguments); if(_fbDb) pushCol('reviews'); }; }
+  if(typeof saveExp==='function'){ const _e=saveExp; saveExp=function(){ _e.apply(this,arguments); if(_fbDb) pushCol('expenses'); }; }
+  if(typeof saveBlocks==='function'){ const _b=saveBlocks; saveBlocks=function(){ _b.apply(this,arguments); if(_fbDb) pushCol('blocks'); }; }
+})();
+
 /* INIT */
 load();
 renderSvcPreview();
@@ -3439,6 +3560,7 @@ syncStickies();
 window.addEventListener('resize', syncStickies);
 window.addEventListener('orientationchange', syncStickies);
 setTimeout(syncStickies, 500);
+try{ initCloud(); }catch(e){}
 })();
 
 </script>
