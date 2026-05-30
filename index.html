@@ -2583,7 +2583,7 @@ function editService(id){
     const desc = $('#se-desc').value.trim();
     if(isNew){ SERVICES.push({...s,name,duration:dur,price,desc,img:seImg}); }
     else{ const o = SERVICES.find(x=>x.id===id); o.name=name;o.duration=dur;o.price=price;o.desc=desc;o.img=seImg; }
-    try{ localStorage.setItem('yh:services',JSON.stringify(SERVICES)); }catch(e){ if(!isNew){const o=SERVICES.find(x=>x.id===id); o.img=null;} else {SERVICES[SERVICES.length-1].img=null;} toast('La foto pesa demasiado, prueba una más pequeña',true); }
+    saveS();
     renderSvcEditor(); renderSvcPreview(); renderSvcPick(); closeModal(); toast('Guardado ✓');
   });
 }
@@ -2620,7 +2620,7 @@ function editStaff(id){
     const init=($('#ste-init').value||name[0]).toUpperCase();
     if(isNew){ STAFF.push({...s,name,role,initial:init,photo:steImg}); }
     else{ const o=STAFF.find(x=>x.id===id); o.name=name;o.role=role;o.initial=init;o.photo=steImg; }
-    try{ localStorage.setItem('yh:staff',JSON.stringify(STAFF)); }catch(e){ if(isNew){STAFF[STAFF.length-1].photo=null;}else{const o=STAFF.find(x=>x.id===id);o.photo=null;} toast('La foto pesa demasiado, intenta una más pequeña',true); }
+    saveT();
     renderStfEditor(); renderSpecPick(); if(typeof renderAboutTeam==='function') renderAboutTeam(); if(typeof renderAboutPortrait==='function') renderAboutPortrait(); closeModal(); toast('Guardado ✓');
   });
 }
@@ -2656,7 +2656,7 @@ $('#info-edit').addEventListener('click',()=>{
     INFO.instagram = $('#ie-ig').value.trim();
     INFO.tiktok = $('#ie-tt').value.trim();
     INFO.photo = ieImg;
-    try{ localStorage.setItem('yh:info',JSON.stringify(INFO)); }catch(e){ INFO.photo=null; try{localStorage.setItem('yh:info',JSON.stringify(INFO));}catch(_){} renderInfo(); wireCustomerLinks(); renderAboutPortrait(); closeModal(); toast('La foto pesa demasiado, intenta una más pequeña',true); return; }
+    saveI();
     renderInfo(); wireCustomerLinks(); renderAboutPortrait(); closeModal(); toast('Guardado ✓');
   });
 });
