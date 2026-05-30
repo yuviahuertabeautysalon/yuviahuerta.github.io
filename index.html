@@ -1804,8 +1804,8 @@ function renderTestimonials(){
 function showCustTab(t){
   $$('.tabs button[data-ct]').forEach(b=>b.classList.toggle('on',b.dataset.ct===t));
   $$('.sec[data-cs]').forEach(s=>s.classList.toggle('on',s.dataset.cs===t));
-  if(t==='my') renderMy();
-  if(t==='results') renderGallery();
+  if(t==='my'){ if(typeof subscribeCol==='function') subscribeCol('bookings'); renderMy(); }
+  if(t==='results'){ if(typeof subscribeCol==='function') subscribeCol('gallery'); renderGallery(); }
   if(t==='book'){ renderSvcPick(); renderSpecPick(); }
   if(typeof renderReminder==='function') renderReminder();
   window.scrollTo(0,0);
@@ -2423,6 +2423,7 @@ pinInputs.forEach((inp,i)=>{
         $('#login').style.display = 'none';
         $('#admin-app').style.display = 'block';
         renderAdmin();
+        if(typeof subscribeCol==='function'){ ['bookings','gallery','reviews','expenses','blocks'].forEach(subscribeCol); }
         toast('Bienvenida ✓');
       }else{
         $('#pin-err').classList.add('on');
@@ -2572,7 +2573,7 @@ function editService(id){
   }
   paint();
   drop.addEventListener('click',()=>file.click());
-  file.addEventListener('change',()=>{ const f=file.files[0]; if(!f) return; imgResize(f,1400,(d)=>{ if(!d){ toast('No se pudo leer la imagen',true); return; } openCropper(d,1,1,640,(c)=>{ if(c){ seImg=c; paint(); } }); }); });
+  file.addEventListener('change',()=>{ const f=file.files[0]; if(!f) return; imgResize(f,1400,(d)=>{ if(!d){ toast('No se pudo leer la imagen',true); return; } openCropper(d,1,1,360,(c)=>{ if(c){ seImg=c; paint(); } }); }); });
   $('#se-cancel').addEventListener('click',closeModal);
   $('#se-save').addEventListener('click',()=>{
     const name = $('#se-name').value.trim();
@@ -2612,7 +2613,7 @@ function editStaff(id){
   function stePaint(){ steDrop.innerHTML = steImg ? '<img src="'+steImg+'"><button type="button" class="se-rm" style="position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:999px;width:28px;height:28px;cursor:pointer">✕</button><span class="lbl">Tocar para cambiar</span>' : '<span class="lbl">+ Subir foto</span>'; const rm=steDrop.querySelector('.se-rm'); if(rm) rm.addEventListener('click',(e)=>{ e.stopPropagation(); steImg=null; stePaint(); }); }
   stePaint();
   steDrop.addEventListener('click',()=>steFile.click());
-  steFile.addEventListener('change',()=>{ const f=steFile.files[0]; if(!f) return; imgResize(f,1200,(d)=>{ if(!d){ toast('No se pudo leer la imagen',true); return; } openCropper(d,4,5,440,(c)=>{ if(c){ steImg=c; stePaint(); } }); }); });
+  steFile.addEventListener('change',()=>{ const f=steFile.files[0]; if(!f) return; imgResize(f,1200,(d)=>{ if(!d){ toast('No se pudo leer la imagen',true); return; } openCropper(d,4,5,360,(c)=>{ if(c){ steImg=c; stePaint(); } }); }); });
   $('#ste-save').addEventListener('click',()=>{
     const name=$('#ste-name').value.trim(); if(!name) return toast('Falta el nombre',true);
     const role=$('#ste-role').value.trim()||'Técnica';
@@ -2646,7 +2647,7 @@ $('#info-edit').addEventListener('click',()=>{
   function iePaint(){ ieDrop.innerHTML = ieImg ? '<img src="'+ieImg+'"><button type="button" class="se-rm" style="position:absolute;top:8px;right:8px;z-index:2;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:999px;width:28px;height:28px;cursor:pointer">✕</button><span class="lbl">Tocar para cambiar</span>' : '<span class="lbl">+ Subir foto de Yuvia</span>'; const rm=ieDrop.querySelector('.se-rm'); if(rm) rm.addEventListener('click',(e)=>{ e.stopPropagation(); ieImg=null; iePaint(); }); }
   iePaint();
   ieDrop.addEventListener('click',()=>ieFile.click());
-  ieFile.addEventListener('change',()=>{ const f=ieFile.files[0]; if(!f) return; imgResize(f,1400,(d)=>{ if(!d){ toast('No se pudo leer la imagen',true); return; } openCropper(d,4,5,600,(c)=>{ if(c){ ieImg=c; iePaint(); } }); }); });
+  ieFile.addEventListener('change',()=>{ const f=ieFile.files[0]; if(!f) return; imgResize(f,1400,(d)=>{ if(!d){ toast('No se pudo leer la imagen',true); return; } openCropper(d,4,5,480,(c)=>{ if(c){ ieImg=c; iePaint(); } }); }); });
   $('#ie-save').addEventListener('click',()=>{
     INFO.name = $('#ie-name').value.trim()||INFO.name;
     INFO.address = $('#ie-addr').value.trim()||INFO.address;
@@ -3316,7 +3317,7 @@ function openCropper(src, aspW, aspH, outW, cb){
     const cv=document.createElement('canvas'); cv.width=outW; cv.height=outH;
     const ctx=cv.getContext('2d'); ctx.fillStyle='#000'; ctx.fillRect(0,0,outW,outH);
     ctx.drawImage(im, ox*s, oy*s, iw*cover*zoom*s, ih*cover*zoom*s);
-    let out=null; try{ out=cv.toDataURL('image/jpeg',0.85); }catch(e){ out=null; }
+    let out=null; try{ out=cv.toDataURL('image/jpeg',0.8); }catch(e){ out=null; }
     bg.remove(); cb(out);
   });
 }
@@ -3326,7 +3327,7 @@ function renderGallery(){
   if(!gallery.length){ slot.innerHTML = '<div class="gal-empty" style="grid-column:1/-1">Muy pronto: resultados reales de nuestras clientas ✨</div>'; return; }
   slot.innerHTML = gallery.map(g=>{
     const has2 = g.before && g.after;
-    const main = '<div class="gal-ba'+(has2?'':' single')+'">'+(g.before?'<div class="gal-ph"><span class="tag">Antes</span><img src="'+g.before+'" alt=""></div>':'')+'<div class="gal-ph"><span class="tag after">Después</span><img src="'+(g.after||g.before)+'" alt=""></div></div>';
+    const main = '<div class="gal-ba'+(has2?'':' single')+'">'+(g.before?'<div class="gal-ph"><span class="tag">Antes</span><img loading="lazy" decoding="async" src="'+g.before+'" alt=""></div>':'')+'<div class="gal-ph"><span class="tag after">Después</span><img loading="lazy" decoding="async" src="'+(g.after||g.before)+'" alt=""></div></div>';
     const cap = (g.label||g.svc) ? '<div class="gal-cap"><span>'+(g.label||'Resultado')+'</span>'+(g.svc?'<small>'+g.svc+'</small>':'')+'</div>' : '';
     return '<div class="gal-card">'+main+cap+'</div>';
   }).join('');
@@ -3344,8 +3345,8 @@ function showGalleryUpload(){
   document.getElementById('modal').classList.add('on');
   const db=document.getElementById('gu-before'), da=document.getElementById('gu-after'), fb=document.getElementById('gu-fb'), fa=document.getElementById('gu-fa');
   db.addEventListener('click',()=>fb.click()); da.addEventListener('click',()=>fa.click());
-  fb.addEventListener('change',()=>{ const f=fb.files[0]; if(f) imgResize(f,1400,d=>{ if(d) openCropper(d,3,4,760,c=>{ if(c){ beforeImg=c; db.innerHTML='<img src="'+c+'"><span class="lbl">Antes</span>'; } }); }); });
-  fa.addEventListener('change',()=>{ const f=fa.files[0]; if(f) imgResize(f,1400,d=>{ if(d) openCropper(d,3,4,760,c=>{ if(c){ afterImg=c; da.innerHTML='<img src="'+c+'"><span class="lbl">Después</span>'; } }); }); });
+  fb.addEventListener('change',()=>{ const f=fb.files[0]; if(f) imgResize(f,1400,d=>{ if(d) openCropper(d,3,4,560,c=>{ if(c){ beforeImg=c; db.innerHTML='<img src="'+c+'"><span class="lbl">Antes</span>'; } }); }); });
+  fa.addEventListener('change',()=>{ const f=fa.files[0]; if(f) imgResize(f,1400,d=>{ if(d) openCropper(d,3,4,560,c=>{ if(c){ afterImg=c; da.innerHTML='<img src="'+c+'"><span class="lbl">Después</span>'; } }); }); });
   document.getElementById('gu-no').addEventListener('click',()=>document.getElementById('modal').classList.remove('on'));
   document.getElementById('gu-save').addEventListener('click',()=>{
     if(!afterImg) return toast('Falta la foto de “Después”',true);
@@ -3472,6 +3473,21 @@ async function pushCol(name){
   }catch(e){ updateCloudStatus(e.message); }
 }
 async function pushInfo(){ if(!_fbDb||!_fbFs) return; try{ await _fbFs.setDoc(_fbFs.doc(_fbDb,'salon','info'), JSON.parse(JSON.stringify(INFO))); }catch(e){ updateCloudStatus(e.message); } }
+const _subbed={};
+async function subscribeCol(name){
+  if(_subbed[name]||!_fbDb||!_fbFs) return; _subbed[name]=true;
+  await pullCol(name);
+  const c=FB_COLS.find(x=>x[0]===name); if(!c) return;
+  try{ _fbFs.onSnapshot(_fbFs.collection(_fbDb,name),(snap)=>{ const arr=[]; snap.forEach(d=>arr.push(d.data())); c[2](arr); persistLocal(name); rerenderAll(); },(e)=>{}); }catch(e){}
+}
+async function pullCol(name){
+  const fs=_fbFs; const c=FB_COLS.find(x=>x[0]===name); if(!c||!_fbDb) return;
+  try{
+    const snap=await fs.getDocs(fs.collection(_fbDb,name));
+    if(snap.empty){ if(c[1]().length) await pushCol(name); }
+    else { const arr=[]; snap.forEach(d=>arr.push(d.data())); c[2](arr); persistLocal(name); }
+  }catch(e){}
+}
 async function pullAll(){
   const fs=_fbFs;
   try{
@@ -3479,13 +3495,9 @@ async function pullAll(){
     if(infoSnap.exists()){ INFO={...INFO,...infoSnap.data()}; try{localStorage.setItem('yh:info',JSON.stringify(INFO));}catch(e){} }
     else { await pushInfo(); }
   }catch(e){}
-  for(const [name,get,set] of FB_COLS){
-    try{
-      const snap=await fs.getDocs(fs.collection(_fbDb,name));
-      if(snap.empty){ if(get().length) await pushCol(name); }
-      else { const arr=[]; snap.forEach(d=>arr.push(d.data())); set(arr); persistLocal(name); }
-    }catch(e){}
-  }
+  await pullCol('services'); await pullCol('staff');
+  rerenderAll();
+  await Promise.all([pullCol('gallery'),pullCol('bookings'),pullCol('reviews'),pullCol('expenses'),pullCol('blocks')]);
   rerenderAll();
 }
 async function initCloud(){
@@ -3494,15 +3506,19 @@ async function initCloud(){
   try{
     const appMod=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
     const fs=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
-    _fbFs=fs; _fbApp=appMod.initializeApp(cfg); _fbDb=fs.getFirestore(_fbApp);
-    await pullAll();
-    FB_COLS.forEach(([name,get,set])=>{
-      fs.onSnapshot(fs.collection(_fbDb,name),(snap)=>{
-        const arr=[]; snap.forEach(d=>arr.push(d.data())); set(arr); persistLocal(name); rerenderAll();
-      },(err)=>{ updateCloudStatus(err.message); });
-    });
+    _fbFs=fs; _fbApp=appMod.initializeApp(cfg);
+    try{ _fbDb=fs.initializeFirestore(_fbApp,{ localCache: fs.persistentLocalCache({ tabManager: fs.persistentMultipleTabManager() }) }); }
+    catch(e){ _fbDb=fs.getFirestore(_fbApp); }
+    try{
+      const infoSnap=await fs.getDoc(fs.doc(_fbDb,'salon','info'));
+      if(infoSnap.exists()){ INFO={...INFO,...infoSnap.data()}; try{localStorage.setItem('yh:info',JSON.stringify(INFO));}catch(e){} } else { await pushInfo(); }
+    }catch(e){}
+    if(typeof renderInfo==='function')renderInfo(); if(typeof wireCustomerLinks==='function')wireCustomerLinks(); if(typeof renderAboutPortrait==='function')renderAboutPortrait();
     fs.onSnapshot(fs.doc(_fbDb,'salon','info'),(d)=>{ if(d.exists()){ INFO={...INFO,...d.data()}; try{localStorage.setItem('yh:info',JSON.stringify(INFO));}catch(e){} if(typeof renderInfo==='function')renderInfo(); if(typeof wireCustomerLinks==='function')wireCustomerLinks(); if(typeof renderAboutPortrait==='function')renderAboutPortrait(); } });
+    await subscribeCol('services'); await subscribeCol('staff');
+    rerenderAll();
     fbStatus='on'; updateCloudStatus();
+    if(adminLoggedIn){ ['bookings','gallery','reviews','expenses','blocks'].forEach(subscribeCol); }
   }catch(e){ fbStatus='error'; updateCloudStatus(e&&e.message); }
 }
 function showCloudModal(){
@@ -3539,6 +3555,7 @@ function showCloudModal(){
 
 /* INIT */
 load();
+try{ initCloud(); }catch(e){}
 renderSvcPreview();
 renderSvcPick();
 renderSpecPick();
@@ -3560,7 +3577,6 @@ syncStickies();
 window.addEventListener('resize', syncStickies);
 window.addEventListener('orientationchange', syncStickies);
 setTimeout(syncStickies, 500);
-try{ initCloud(); }catch(e){}
 })();
 
 </script>
