@@ -8,6 +8,9 @@
 <title>Yuvia Huerta · Beauty Salon YH</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="dns-prefetch" href="https://yuvia-beauty.firebaseapp.com">
 <link href="https://fonts.googleapis.com/css2?family=Allura&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -137,7 +140,7 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
 .svc-d{font-size:12.5px;color:var(--text-3);margin:10px 0 0;line-height:1.55}
 
 /* TESTIMONIALS */
-.testimonials{padding:36px 22px 8px}
+.testimonials{padding:36px 22px 8px;content-visibility:auto;contain-intrinsic-size:auto 480px}
 .testi-grid{display:grid;gap:12px}
 .testi{background:linear-gradient(180deg,var(--surface),var(--surface-2));border:1px solid var(--line);border-radius:var(--r-md);padding:18px;transition:all .3s var(--ease);position:relative;overflow:hidden}
 .testi:hover{border-color:rgba(201,169,110,.25);transform:translateY(-2px);box-shadow:var(--shadow-2)}
@@ -245,6 +248,8 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
 
 .times-h{font-size:12px;color:var(--text-3);margin-bottom:10px;letter-spacing:.3px;font-weight:500}
 .times{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;min-height:90px}
+.time-grp{grid-column:1/-1;font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold-deep);font-weight:600;margin:6px 0 2px;font-family:'Jost',sans-serif}
+.time-grp:first-child{margin-top:0}
 .times button{padding:10px;text-align:center;font-size:13px;border-radius:8px;background:rgba(74,54,38,.03);border:1px solid var(--line);color:inherit;font-family:'Inter',sans-serif;font-weight:500;transition:all .15s}
 .times button:hover:not(:disabled){border-color:rgba(74,54,38,.18)}
 .times button:disabled{color:rgba(58,42,28,.25);text-decoration:line-through;cursor:not-allowed}
@@ -686,6 +691,17 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
 .block-row .b-d{flex:1;color:var(--text);font-weight:500}
 .block-row .b-r{color:var(--text-3);font-size:11px;font-weight:500}
 .block-row .b-x{width:24px;height:24px;border-radius:6px;background:rgba(226,87,92,.12);color:#ff8a8e;border:none;cursor:pointer;font-size:12px;flex-shrink:0}
+.seg{display:flex;gap:6px;background:rgba(74,54,38,.05);padding:4px;border-radius:10px}
+.seg button{flex:1;padding:9px 8px;border:none;background:transparent;color:var(--text-3);font-size:12.5px;font-weight:600;border-radius:7px;cursor:pointer;font-family:'Jost',sans-serif;transition:all .2s}
+.seg button.on{background:linear-gradient(180deg,var(--gold-soft),var(--gold));color:#3a2a1c;box-shadow:0 2px 6px rgba(168,129,74,.25)}
+.rem-rows{display:flex;flex-direction:column;gap:8px;margin:8px 0 4px;max-height:46vh;overflow:auto}
+.rem-row{display:flex;align-items:center;gap:10px;padding:11px 13px;background:rgba(74,54,38,.03);border:1px solid var(--line);border-radius:12px}
+.rem-row.reminded{background:rgba(63,155,120,.07);border-color:rgba(63,155,120,.28)}
+.rr-info{flex:1;min-width:0}
+.rr-n{font-size:13.5px;font-weight:600;color:var(--text)}
+.rr-s{font-size:11.5px;color:var(--text-3);margin-top:2px}
+.rr-chk{font-size:10px;color:var(--green);font-weight:600;letter-spacing:.3px}
+.rr-send{flex-shrink:0;padding:8px 14px!important}
 
 /* RATING DISPLAY */
 .rev-card{background:rgba(74,54,38,.03);border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:8px}
@@ -763,6 +779,13 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
 .svc-icon.photo{padding:0;overflow:hidden;background:none;border-color:rgba(201,169,110,.3)}
 .svc-icon.photo img{width:100%;height:100%;object-fit:cover;display:block}
 .svc-card:hover .svc-icon.photo{box-shadow:0 4px 12px rgba(201,169,110,.25)}
+/* Shimmer mientras cargan las fotos */
+@keyframes yhshim{0%{background-position:-160% 0}100%{background-position:160% 0}}
+.svc-icon.photo,.gal-ph,.about-portrait,.spec-av.photo,.about-team .ta.photo{background:linear-gradient(100deg,#ece1cf 30%,#f7efe1 50%,#ece1cf 70%);background-size:200% 100%;animation:yhshim 1.3s ease-in-out infinite}
+.svc-icon.photo img,.gal-ph img,.about-portrait img,.spec-av.photo img,.about-team .ta.photo img{animation:yhfade .45s ease both}
+@keyframes yhfade{from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.svc-icon.photo,.gal-ph,.about-portrait,.spec-av.photo,.about-team .ta.photo{animation:none}}
+.imgloaded{animation:none!important;background:none!important}
 /* Antes y después */
 .gal-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-top:8px}
 @media(min-width:520px){.gal-grid{grid-template-columns:1fr 1fr}}
@@ -976,7 +999,7 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
 .svc-tag{position:absolute;top:14px;right:14px;font-size:8.5px;letter-spacing:1.5px;background:linear-gradient(135deg,var(--gold-soft),var(--gold-deep));color:#0a0a0a;padding:3px 9px;border-radius:999px;font-weight:700;text-transform:uppercase;box-shadow:0 2px 6px rgba(201,169,110,.3)}
 
 /* About-us strip */
-.about-strip{padding:32px 22px;background:linear-gradient(180deg,rgba(201,169,110,.03),transparent);border-top:1px solid rgba(201,169,110,.08);border-bottom:1px solid rgba(201,169,110,.08);margin-top:14px}
+.about-strip{padding:32px 22px;background:linear-gradient(180deg,rgba(201,169,110,.03),transparent);border-top:1px solid rgba(201,169,110,.08);border-bottom:1px solid rgba(201,169,110,.08);margin-top:14px;content-visibility:auto;contain-intrinsic-size:auto 520px}
 .about-team{display:flex;justify-content:center;gap:-8px;margin:18px 0 14px}
 .about-team .ta{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--gold-soft),var(--gold-deep));color:#0a0a0a;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;border:3px solid var(--bg);margin-left:-12px;transition:all .3s var(--ease-bounce);position:relative;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .about-team .ta:first-child{margin-left:0}
@@ -1417,6 +1440,7 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
     <section class="sec" data-as="agenda">
       <div class="card" style="position:relative;padding-bottom:24px">
         <div class="card-h"><h4 id="ag-title">Hoy</h4><div class="actions-mini"><button class="btn btn-gold btn-sm" id="ag-newcita">+ Nueva cita</button><button class="btn btn-g btn-sm" id="ag-prev">‹</button><button class="btn btn-g btn-sm" id="ag-today">Hoy</button><button class="btn btn-g btn-sm" id="ag-next">›</button></div></div>
+        <button class="btn btn-gold btn-sm" id="ag-remind" style="width:100%;margin-bottom:14px;display:none;justify-content:center">📲 Recordar a clientas de mañana</button>
         <div id="ag-list"></div>
         <button class="walkin-fab" id="walkin-btn" title="Walk-in rápido">+</button>
       </div>
@@ -1468,7 +1492,7 @@ body{font-family:'Jost','Inter',-apple-system,BlinkMacSystemFont,sans-serif;back
           <button id="export-json">Exportar JSON</button>
           <button id="export-csv">Exportar CSV</button>
           <button id="import-btn">Importar JSON</button>
-          <button class="danger" id="reset-btn">Borrar todo</button>
+          <button id="reset-btn">Refrescar datos</button>
           <input type="file" id="import-file" accept=".json" hidden>
         </div>
       </div>
@@ -1601,9 +1625,7 @@ const DEFAULT_SERVICES = [
   {id:'depilacion',name:'Depilación con cera',cat:'Otros',duration:20,price:15,desc:'Depilación facial con cera — labio, mentón o entrecejo',active:true}
 ];
 const DEFAULT_STAFF = [
-  {id:'yuvia',name:'Yuvia Huerta',role:'Maestra · todos',initial:'Y',active:true},
-  {id:'karla',name:'Karla Reyes',role:'Senior · pestañas',initial:'K',active:true},
-  {id:'sofia',name:'Sofía Pérez',role:'Junior · cejas',initial:'S',active:true}
+  {id:'yuvia',name:'Yuvia Huerta',role:'Especialista · cejas y pestañas',initial:'Y',active:true}
 ];
 const DEFAULT_INFO = {
   name:'Yuvia Huerta · Beauty Salon YH',
@@ -1678,6 +1700,7 @@ const slugify = s => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g
 
 let SERVICES=[], STAFF=[], INFO={}, ADMIN_PIN='777';
 let bookings = [];
+let busySlots = []; // disponibilidad SIN datos personales (lo que ven las clientas)
 let book = {service:null,specialist:null,date:null,time:null,name:'',phone:'',email:'',notes:''};
 let lastConfirmed = null;
 let calMonth = new Date().getMonth(), calYear = new Date().getFullYear();
@@ -1859,19 +1882,45 @@ function renderCal(){
     renderTimes();
   }));
 }
+function svcDurationById(id){ const s=SERVICES.find(x=>x.id===id); return (s&&s.duration)?s.duration:60; }
+function dayBusyRanges(specialistId, dateObj, ignoreId){
+  // Usa busySlots (sin datos personales). Respaldo: bookings si el admin las tiene cargadas.
+  const src = (busySlots && busySlots.length) ? busySlots : bookings;
+  return src.filter(b => b.specialistId===specialistId && b.status!=='cancelled' && b.id!==ignoreId && new Date(b.date).toDateString()===dateObj.toDateString())
+    .map(b=>{ const p=(b.time||'0:0').split(':').map(Number); const st=p[0]*60+(p[1]||0); return [st, st + (b.dur||svcDurationById(b.serviceId))]; });
+}
+function slotConflicts(specialistId, dateObj, startMin, durMin, ignoreId){
+  const end=startMin+durMin;
+  if(dayBusyRanges(specialistId,dateObj,ignoreId).some(r => startMin < r[1] && end > r[0])) return true;
+  if(typeof blockedRangesForDay==='function' && blockedRangesForDay(dateObj).some(r => startMin < r[1] && end > r[0])) return true;
+  return false;
+}
 function renderTimes(){
-  if(!book.date){ $('#time-slots').innerHTML='<div class="empty">Selecciona un día</div>'; return; }
-  if(!book.specialist){ $('#time-slots').innerHTML='<div class="empty">Falta especialista</div>'; return; }
+  if(!book.date){ $('#time-slots').innerHTML='<div class="empty">'+t('Selecciona un día','Pick a day')+'</div>'; return; }
+  if(!book.specialist){ $('#time-slots').innerHTML='<div class="empty">'+t('Falta especialista','Pick a specialist')+'</div>'; return; }
   const d = new Date(book.date);
-  $('#time-title').textContent = d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'short'});
-  const taken = bookings.filter(b => b.specialistId===book.specialist && new Date(b.date).toDateString()===d.toDateString() && b.status!=='cancelled').map(b=>b.time);
-  const slots = [];
-  for(let h=10;h<20;h++) for(let m=0;m<60;m+=30) slots.push(String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'));
-  $('#time-slots').innerHTML = slots.map(s=>{
-    const isT = taken.includes(s); const sel = book.time===s;
-    return '<button '+(isT?'disabled':'')+' class="'+(sel?'on':'')+'" data-t="'+s+'">'+s+'</button>';
-  }).join('');
-  $$('#time-slots button:not([disabled])').forEach(el=>el.addEventListener('click',()=>{
+  $('#time-title').textContent = d.toLocaleDateString(LANG==='en'?'en-CA':'es-MX',{weekday:'long',day:'numeric',month:'short'});
+  const dur = svcDurationById(book.service);
+  const OPEN=10*60, CLOSE=20*60;
+  const now=new Date(); const isToday = d.toDateString()===now.toDateString();
+  const nowMin = now.getHours()*60+now.getMinutes();
+  const am=[], pm=[];
+  for(let st=OPEN; st+dur<=CLOSE; st+=30){
+    if(slotConflicts(book.specialist, d, st, dur)) continue;
+    if(isToday && st <= nowMin+30) continue; // 30 min de anticipación
+    const hh=String(Math.floor(st/60)).padStart(2,'0'), mm=String(st%60).padStart(2,'0');
+    (st<12*60?am:pm).push(hh+':'+mm);
+  }
+  if(!am.length && !pm.length){
+    $('#time-slots').innerHTML='<div class="empty">'+t('No quedan horarios para este día con ese servicio. Prueba otra fecha.','No times left this day for that service. Try another date.')+'</div>';
+    return;
+  }
+  const btn = s => '<button class="'+(book.time===s?'on':'')+'" data-t="'+s+'">'+s+'</button>';
+  let html='';
+  if(am.length) html += '<div class="time-grp">'+t('Mañana','Morning')+'</div>'+am.map(btn).join('');
+  if(pm.length) html += '<div class="time-grp">'+t('Tarde','Afternoon')+'</div>'+pm.map(btn).join('');
+  $('#time-slots').innerHTML = html;
+  $$('#time-slots button').forEach(el=>el.addEventListener('click',()=>{
     book.time = el.dataset.t;
     $$('#time-slots button').forEach(x=>x.classList.remove('on'));
     el.classList.add('on');
@@ -1913,9 +1962,16 @@ $('#bk-3').addEventListener('click',()=>{
 });
 $('#bk-confirm').addEventListener('click',()=>{
   const btn = $('#bk-confirm');
-  btn.disabled = true; btn.textContent = 'Procesando…';
   const svc = SERVICES.find(s=>s.id===book.service);
   const spec = STAFF.find(s=>s.id===book.specialist);
+  // Re-validar que el horario siga libre (otra clienta pudo tomarlo desde la nube)
+  const p=(book.time||'0:0').split(':').map(Number); const startMin=p[0]*60+(p[1]||0);
+  if(slotConflicts(book.specialist, new Date(book.date), startMin, svcDurationById(book.service))){
+    showStage(2); renderCal(); renderTimes(); book.time=null;
+    showBkErr(t('Ese horario se acaba de ocupar. Elige otro, por favor.','That time was just taken. Please pick another.'));
+    return;
+  }
+  btn.disabled = true; btn.textContent = 'Procesando…';
   const id = uid();
   bookings.push({
     id, name:book.name, phone:book.phone, email:book.email||null, notes:book.notes||null,
@@ -1930,6 +1986,7 @@ $('#bk-confirm').addEventListener('click',()=>{
   });
   saveB();
   lastConfirmed = bookings[bookings.length-1];
+  cloudSyncBooking(lastConfirmed);
   try{ sessionStorage.setItem('yh:session', book.phone); }catch(e){}
   myPhone = book.phone;
   $('#sm-id').textContent = id;
@@ -2427,7 +2484,7 @@ pinInputs.forEach((inp,i)=>{
         $('#login').style.display = 'none';
         $('#admin-app').style.display = 'block';
         renderAdmin();
-        if(typeof subscribeCol==='function'){ ['bookings','gallery','reviews','expenses','blocks'].forEach(subscribeCol); }
+        if(typeof subscribeCol==='function'){ ['bookings','gallery','reviews','expenses','slots','blocks'].forEach(subscribeCol); setTimeout(()=>{ if(typeof backfillSlots==='function') backfillSlots(); }, 2500); }
         toast('Bienvenida ✓');
       }else{
         $('#pin-err').classList.add('on');
@@ -2520,8 +2577,9 @@ function renderAgenda(){
   const list = bookings.filter(b=>sameDay(b.date,d)).sort((a,b)=>a.time.localeCompare(b.time));
   $('#ag-list').innerHTML = list.length ? list.map(b=>'<div class="appt blist" data-blk="'+b.id+'"><div class="appt-t">'+b.time+'</div><div class="appt-info"><div class="nm">'+b.name+'</div><div class="sv">'+b.service+' · '+b.specialist+'</div></div><span class="status st-'+statusKey(b.status)+'"><span class="dot"></span>'+statusLabel(b.status)+'</span></div>').join('') : '<p class="empty">Sin citas este día</p>';
   $$('#ag-list [data-blk]').forEach(el=>el.addEventListener('click',()=>showBookingModal(el.dataset.blk)));
+  const rb=document.getElementById('ag-remind');
+  if(rb){ const tm=tomorrowBookings(); if(tm.length){ rb.style.display='flex'; const pend=tm.filter(b=>!b.reminded).length; rb.textContent='📲 Recordar a clientas de mañana ('+tm.length+')'+(pend===0?' ✓':''); } else { rb.style.display='none'; } }
 }
-$('#ag-prev').addEventListener('click',()=>{agendaDate.setDate(agendaDate.getDate()-1);renderAgenda();});
 $('#ag-next').addEventListener('click',()=>{agendaDate.setDate(agendaDate.getDate()+1);renderAgenda();});
 $('#ag-today').addEventListener('click',()=>{agendaDate=new Date();agendaDate.setHours(0,0,0,0);renderAgenda();});
 
@@ -2683,7 +2741,7 @@ function showBookingModal(id){
   if(b.quizAnalysis) analysisHtml += '<div style="background:rgba(201,169,110,.05);border-left:2px solid #c9a96e;padding:10px 12px;border-radius:0 8px 8px 0;margin-top:8px;font-size:11.5px;color:rgba(58,42,28,.78);line-height:1.5"><div style="font-size:9.5px;letter-spacing:2px;color:#c9a96e;margin-bottom:4px;font-weight:600">QUIZ</div>Estilo '+b.quizAnalysis.style+' · rostro '+b.quizAnalysis.face+' · match '+b.quizAnalysis.match+'%</div>';
   $('#modal-content').innerHTML = '<div class="modal-id">Folio '+b.id+'</div><h3>'+b.service+' · <i>'+b.specialist+'</i></h3><p class="ct">'+dStr+'</p><div class="summary"><div class="sm-row"><span class="sm-l">Cliente</span><span class="sm-v">'+b.name+'</span></div><div class="sm-row"><span class="sm-l">WhatsApp</span><span class="sm-v">'+b.phone+'</span></div>'+(b.email?'<div class="sm-row"><span class="sm-l">Email</span><span class="sm-v">'+b.email+'</span></div>':'')+(b.notes?'<div class="sm-row"><span class="sm-l">Notas</span><span class="sm-v" style="font-style:italic">'+b.notes+'</span></div>':'')+'<div class="sm-row"><span class="sm-l">Estado</span><span class="sm-v"><span class="status st-'+statusKey(b.status)+'"><span class="dot"></span>'+statusLabel(b.status)+'</span></span></div><div class="sm-row"><span class="sm-l">Total</span><span class="sm-v">'+fmt(b.total)+'</span></div></div>'+analysisHtml+(typeof buildWaTemplates==='function'?buildWaTemplates(b):'')+'<div class="modal-act"><button data-bs="confirmed" style="background:rgba(93,202,165,.12);color:#5dcaa5">Confirmada</button><button data-bs="arrived" style="background:rgba(122,181,245,.12);color:#7ab5f5">Llegó</button><button data-bs="in_service" style="background:rgba(239,159,39,.12);color:#ef9f27">En servicio</button><button data-bs="done" style="background:rgba(160,160,160,.18);color:rgba(58,42,28,.7)">Finalizada</button><button data-bs="cancelled" style="background:rgba(226,87,92,.15);color:#ff8a8e">Cancelar</button></div>';
   $('#modal').classList.add('on');
-  $$('[data-bs]').forEach(btn=>btn.addEventListener('click',()=>{ b.status=btn.dataset.bs; saveB(); closeModal(); renderAdmin(); toast('Estado: '+statusLabel(b.status)); }));
+  $$('[data-bs]').forEach(btn=>btn.addEventListener('click',()=>{ b.status=btn.dataset.bs; saveB(); cloudSyncBooking(b); closeModal(); renderAdmin(); toast('Estado: '+statusLabel(b.status)); }));
 }
 function closeModal(){ $('#modal').classList.remove('on'); }
 $('#modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
@@ -2717,6 +2775,7 @@ $('#import-file').addEventListener('change',e=>{
       if(d.staff) STAFF = d.staff;
       if(d.info) INFO = d.info;
       saveB();saveS();saveT();saveI();
+      if(Array.isArray(d.bookings)) d.bookings.forEach(b=>cloudSyncBooking(b));
       renderAdmin(); renderSvcPreview(); renderSvcPick(); renderSpecPick();
       toast('Importado ✓');
     }catch(err){ toast('JSON inválido',true); }
@@ -2725,16 +2784,11 @@ $('#import-file').addEventListener('change',e=>{
   e.target.value = '';
 });
 $('#reset-btn').addEventListener('click',()=>{
-  $('#modal-content').innerHTML = '<h3>¿Borrar <i>todo</i>?</h3><p class="ct">Se eliminarán todas las reservas, servicios personalizados y configuración. Esta acción no se puede deshacer.</p><div class="modal-act"><button class="btn btn-g btn-sm" id="rs-no" style="background:rgba(74,54,38,.04)">Cancelar</button><button class="btn btn-sm" id="rs-yes" style="background:rgba(226,87,92,.15);color:#ff8a8e;border:1px solid rgba(226,87,92,.3)">Borrar todo</button></div>';
+  $('#modal-content').innerHTML = '<h3>Refrescar <i>este dispositivo</i></h3><p class="ct">Vuelve a cargar todos los datos desde la nube. Útil si algo se ve raro. <b>No borra</b> tus citas ni tu información — todo sigue guardado en la nube.</p><div class="modal-act"><button class="btn btn-g btn-sm" id="rs-no" style="background:rgba(74,54,38,.04)">Cancelar</button><button class="btn btn-gold btn-sm" id="rs-yes">Refrescar ahora</button></div>';
   $('#modal').classList.add('on');
   $('#rs-no').addEventListener('click',closeModal);
   $('#rs-yes').addEventListener('click',()=>{
-    localStorage.removeItem('yh:bookings');
-    localStorage.removeItem('yh:services');
-    localStorage.removeItem('yh:staff');
-    localStorage.removeItem('yh:info');
-    localStorage.removeItem('yh:pin');
-    localStorage.removeItem('yh:lastphone');
+    ['yh:bookings','yh:services','yh:staff','yh:info','yh:gallery','yh:reviews','yh:expenses','yh:blocks'].forEach(k=>localStorage.removeItem(k));
     closeModal();
     setTimeout(()=>location.reload(),200);
   });
@@ -2773,6 +2827,7 @@ function loadV2(){
   try{ blocks = JSON.parse(localStorage.getItem('yh:blocks')||'[]'); }catch{ blocks=[]; }
   try{ reviews = JSON.parse(localStorage.getItem('yh:reviews')||'[]'); }catch{ reviews=[]; }
   try{ gallery = JSON.parse(localStorage.getItem('yh:gallery')||'[]'); }catch{ gallery=[]; }
+  try{ busySlots = JSON.parse(localStorage.getItem('yh:slots')||'[]'); }catch{ busySlots=[]; }
   referCode = localStorage.getItem('yh:refer:'+myPhone) || '';
 }
 function saveExp(){ try{localStorage.setItem('yh:expenses',JSON.stringify(expenses));}catch{} }
@@ -2795,10 +2850,23 @@ function daysUntil(d){
 function isDateBlocked(d){
   const day = new Date(d); day.setHours(0,0,0,0);
   return blocks.some(b => {
+    if(b.allDay===false) return false; // los bloqueos por horas NO cierran el día completo
     const bs = new Date(b.start); bs.setHours(0,0,0,0);
     const be = new Date(b.end||b.start); be.setHours(0,0,0,0);
     return day>=bs && day<=be;
   });
+}
+function blockedRangesForDay(d){
+  const day = new Date(d); day.setHours(0,0,0,0);
+  const out=[];
+  blocks.forEach(b => {
+    const bs = new Date(b.start); bs.setHours(0,0,0,0);
+    const be = new Date(b.end||b.start); be.setHours(0,0,0,0);
+    if(!(day>=bs && day<=be)) return;
+    if(b.allDay===false && b.from && b.to){ const p1=b.from.split(':').map(Number), p2=b.to.split(':').map(Number); out.push([p1[0]*60+p1[1], p2[0]*60+p2[1]]); }
+    else { out.push([0,1440]); }
+  });
+  return out;
 }
 
 /* ===== REMINDER BANNER ===== */
@@ -2866,7 +2934,7 @@ function renderMy(){
     document.getElementById('my-loyalty').innerHTML='';
     document.getElementById('my-refer').innerHTML='';
     document.getElementById('my-list').innerHTML = '<div class="my-lookup"><div class="my-lk-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div><h4>'+t('Consulta tus citas','Look up your bookings')+'</h4><p>'+t('Ingresa tu WhatsApp para ver tus reservas. Así la información de cada clienta queda privada.','Enter your WhatsApp to view your bookings — this keeps each client\'s info private.')+'</p><input id="my-phone-in" type="tel" inputmode="numeric" placeholder="403 123 4567" autocomplete="tel"><button class="btn btn-gold" id="my-lookup-btn" style="width:100%">'+t('Ver mis citas','See my bookings')+'</button></div>';
-    const go=()=>{ const el=document.getElementById('my-phone-in'); const v=(el.value||'').trim(); if(v.replace(/\D/g,'').length<10){ el.classList.add('err'); toast(t('Ingresa un WhatsApp válido','Enter a valid WhatsApp'),true); return; } myPhone=v; try{sessionStorage.setItem('yh:session',v);}catch(e){} renderMy(); renderReminder(); };
+    const go=()=>{ const el=document.getElementById('my-phone-in'); const v=(el.value||'').trim(); if(v.replace(/\D/g,'').length<10){ el.classList.add('err'); toast(t('Ingresa un WhatsApp válido','Enter a valid WhatsApp'),true); return; } myPhone=v; try{sessionStorage.setItem('yh:session',v);}catch(e){} if(typeof fetchMyBookings==='function'){ fetchMyBookings(v).then(()=>{ renderMy(); renderReminder(); }); } renderMy(); renderReminder(); };
     const lb=document.getElementById('my-lookup-btn'); if(lb) lb.addEventListener('click',go);
     const pin=document.getElementById('my-phone-in'); if(pin) pin.addEventListener('keydown',e=>{ if(e.key==='Enter') go(); });
     return;
@@ -2934,6 +3002,7 @@ function rescheduleBooking(id){
     bk.status = 'cancelled';
     bk.cancelReason = 'Reagendada por cliente';
     saveB();
+    cloudSyncBooking(bk);
     book.service = bk.serviceId;
     book.specialist = bk.specialistId;
     book.name = bk.name; book.phone = bk.phone; book.email = bk.email||''; book.notes = bk.notes||''; book.bday = bk.bday||'';
@@ -2952,6 +3021,7 @@ function cancelMyBooking(id){
     const reason = document.getElementById('canc-r').value.trim();
     if(reason) bk.cancelReason = reason;
     saveB();
+    cloudSyncBooking(bk);
     document.getElementById('modal').classList.remove('on');
     renderMy(); renderReminder(); refreshUrgency();
     if(adminLoggedIn) renderAdmin();
@@ -2976,6 +3046,7 @@ function rateBooking(id){
     bk.rating = chosen;
     bk.review = document.getElementById('rt-cmt').value.trim() || null;
     saveB();
+    cloudSyncBooking(bk);
     if(bk.review){
       reviews.push({id:bk.id,name:bk.name,phone:bk.phone,svc:bk.service,rating:chosen,quote:bk.review,date:new Date().toISOString()});
       saveReviews();
@@ -3085,8 +3156,10 @@ function showWalkin(){
     const svc = SERVICES.find(s=>s.id===document.getElementById('wi-svc').value);
     const spec = STAFF.find(s=>s.id===document.getElementById('wi-spec').value);
     const time = document.getElementById('wi-time').value;
-    bookings.push({ id:uid(), name, phone, email:null, notes:'Walk-in', service:svc.name, serviceId:svc.id, specialist:spec.name, specialistId:spec.id, date:new Date().toISOString(), time, total:svc.price, status:'in_service', walkin:true, createdAt:new Date().toISOString() });
+    const wkBk={ id:uid(), name, phone, email:null, notes:'Walk-in', service:svc.name, serviceId:svc.id, specialist:spec.name, specialistId:spec.id, date:new Date().toISOString(), time, total:svc.price, status:'in_service', walkin:true, createdAt:new Date().toISOString() };
+    bookings.push(wkBk);
     saveB();
+    cloudSyncBooking(wkBk);
     document.getElementById('modal').classList.remove('on');
     renderAdmin();
     toast('Walk-in registrado ✓');
@@ -3152,23 +3225,33 @@ function renderBlocks(){
   const future = sorted.filter(b=>new Date(b.end||b.start)>=today);
   document.getElementById('block-list').innerHTML = future.length ? future.map(b=>{
     const startD = new Date(b.start).toLocaleDateString('es-MX',{day:'numeric',month:'short'});
-    const endD = b.end && b.end!==b.start ? ' → '+new Date(b.end).toLocaleDateString('es-MX',{day:'numeric',month:'short'}) : '';
-    return '<div class="block-row"><div><div class="b-d">'+startD+endD+'</div><div class="b-r">'+(b.reason||'Cerrado')+'</div></div><button class="b-x" data-bld="'+b.id+'">×</button></div>';
+    const endD = b.end && new Date(b.end).toDateString()!==new Date(b.start).toDateString() ? ' → '+new Date(b.end).toLocaleDateString('es-MX',{day:'numeric',month:'short'}) : '';
+    const hrs = (b.allDay===false && b.from && b.to) ? ' · '+b.from+'–'+b.to : ' · todo el día';
+    return '<div class="block-row"><div><div class="b-d">'+startD+endD+hrs+'</div><div class="b-r">'+(b.reason||'Cerrado')+'</div></div><button class="b-x" data-bld="'+b.id+'">×</button></div>';
   }).join('') : '<p style="color:var(--text-4);font-size:11.5px;text-align:center;padding:14px;font-weight:500">Sin bloqueos programados</p>';
-  document.querySelectorAll('[data-bld]').forEach(b=>b.addEventListener('click',()=>{ blocks=blocks.filter(x=>x.id!==b.dataset.bld); saveBlocks(); renderBlocks(); toast('Bloqueo eliminado'); }));
+  document.querySelectorAll('[data-bld]').forEach(b=>b.addEventListener('click',()=>{ const bid=b.dataset.bld; blocks=blocks.filter(x=>x.id!==bid); saveBlocks(); if(typeof cloudRemove==='function') cloudRemove('blocks', bid); renderBlocks(); renderCal(); toast('Bloqueo eliminado'); }));
 }
 function showAddBlock(){
-  document.getElementById('modal-content').innerHTML = '<h3>Bloquear <i>fechas</i></h3><p class="ct">No se podrán reservar citas en el rango.</p><div class="form" style="gap:10px"><div class="fld-row"><div class="fld"><label>Desde</label><input id="bl-start" type="date" value="'+new Date().toISOString().slice(0,10)+'"></div><div class="fld"><label>Hasta</label><input id="bl-end" type="date" value="'+new Date().toISOString().slice(0,10)+'"></div></div><div class="fld"><label>Motivo (opcional)</label><input id="bl-reason" type="text" placeholder="Vacaciones, capacitación…"></div></div><div class="modal-act"><button class="btn btn-g btn-sm" id="bl-no" style="background:rgba(74,54,38,.04);flex:1">Cancelar</button><button class="btn btn-gold btn-sm" id="bl-save" style="flex:2">Bloquear</button></div>';
+  const today=new Date().toISOString().slice(0,10);
+  let slots=''; for(let hh=10;hh<=20;hh++) for(let mm=0;mm<60;mm+=30){ if(hh===20&&mm>0) break; const tt=String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0'); slots+='<option value="'+tt+'">'+tt+'</option>'; }
+  const sel='width:100%;background:rgba(74,54,38,.04);border:1px solid rgba(74,54,38,.1);color:var(--text);padding:11px 14px;border-radius:10px;font-size:14px';
+  document.getElementById('modal-content').innerHTML = '<h3>Bloquear <i>agenda</i></h3><p class="ct">Vacaciones, descansos o citas fuera del sistema.</p><div class="form" style="gap:12px"><div class="fld-row"><div class="fld"><label>Desde</label><input id="bl-start" type="date" value="'+today+'" style="'+sel+'"></div><div class="fld"><label>Hasta</label><input id="bl-end" type="date" value="'+today+'" style="'+sel+'"></div></div><div class="fld"><label>Tipo</label><div class="seg" id="bl-seg"><button type="button" class="on" data-mode="all">Todo el día</button><button type="button" data-mode="part">Solo unas horas</button></div></div><div class="fld-row" id="bl-times" style="display:none"><div class="fld"><label>De</label><select id="bl-from" style="'+sel+'">'+slots+'</select></div><div class="fld"><label>A</label><select id="bl-to" style="'+sel+'">'+slots+'</select></div></div><div class="fld"><label>Motivo (opcional)</label><input id="bl-reason" type="text" placeholder="Vacaciones, comida, capacitación…" style="'+sel+'"></div></div><div class="modal-act"><button class="btn btn-g btn-sm" id="bl-no" style="background:rgba(74,54,38,.04);flex:1">Cancelar</button><button class="btn btn-gold btn-sm" id="bl-save" style="flex:2">Bloquear</button></div>';
   document.getElementById('modal').classList.add('on');
+  let mode='all';
+  document.querySelectorAll('#bl-seg button').forEach(b=>b.addEventListener('click',()=>{ mode=b.dataset.mode; document.querySelectorAll('#bl-seg button').forEach(x=>x.classList.toggle('on',x===b)); document.getElementById('bl-times').style.display = mode==='part'?'grid':'none'; }));
   document.getElementById('bl-no').addEventListener('click',()=>document.getElementById('modal').classList.remove('on'));
   document.getElementById('bl-save').addEventListener('click',()=>{
     const s = document.getElementById('bl-start').value, e = document.getElementById('bl-end').value;
     if(!s) return toast('Falta fecha inicio',true);
-    blocks.push({id:'BL-'+Date.now().toString(36),start:s+'T00:00:00.000Z',end:(e||s)+'T23:59:59.000Z',reason:document.getElementById('bl-reason').value.trim()||'Cerrado'});
+    const blk={id:'BL-'+Date.now().toString(36),start:s+'T00:00:00',end:(e||s)+'T23:59:59',reason:document.getElementById('bl-reason').value.trim()||(mode==='part'?'No disponible':'Cerrado'),allDay:mode==='all'};
+    if(mode==='part'){ const f=document.getElementById('bl-from').value, t2=document.getElementById('bl-to').value; if(f>=t2) return toast('La hora final debe ser mayor',true); blk.from=f; blk.to=t2; }
+    blocks.push(blk);
     saveBlocks();
+    if(typeof cloudUpsert==='function') cloudUpsert('blocks', blk);
     document.getElementById('modal').classList.remove('on');
     renderBlocks();
     renderCal();
+    toast('Bloqueo creado ✓');
     toast('Bloqueo creado ✓');
   });
 }
@@ -3265,10 +3348,12 @@ function showSchedule(){
     const time=document.getElementById('sc-time').value;
     if(!dstr) return toast('Elige una fecha',true);
     const dateObj=new Date(dstr+'T'+time+':00');
-    const conflict=bookings.some(b=>b.specialistId===spec.id && b.status!=='cancelled' && sameDay(b.date,dateObj) && b.time===time);
+    const conflict=slotConflicts(spec.id, dateObj, (function(){const p=time.split(':').map(Number);return p[0]*60+(p[1]||0);})(), svcDurationById(svc.id));
     if(conflict && !confirm(spec.name+' ya tiene una cita a las '+time+'. \u00bfAgendar de todos modos?')) return;
-    bookings.push({ id:uid(), name, phone, email:null, notes:document.getElementById('sc-notes').value.trim()||null, bday:null, rating:null, review:null, service:svc.name, serviceId:svc.id, specialist:spec.name, specialistId:spec.id, date:dateObj.toISOString(), time, total:svc.price, status:'confirmed', faceAnalysis:null, quizAnalysis:null, createdAt:new Date().toISOString() });
+    const scBk={ id:uid(), name, phone, email:null, notes:document.getElementById('sc-notes').value.trim()||null, bday:null, rating:null, review:null, service:svc.name, serviceId:svc.id, specialist:spec.name, specialistId:spec.id, date:dateObj.toISOString(), time, total:svc.price, status:'confirmed', faceAnalysis:null, quizAnalysis:null, createdAt:new Date().toISOString() };
+    bookings.push(scBk);
     saveB();
+    cloudSyncBooking(scBk);
     document.getElementById('modal').classList.remove('on');
     agendaDate=new Date(dateObj); agendaDate.setHours(0,0,0,0);
     renderAdmin(); updateAdminDot();
@@ -3277,8 +3362,48 @@ function showSchedule(){
 }
 const _newCita = document.getElementById('ag-newcita');
 if(_newCita) _newCita.addEventListener('click', showSchedule);
+function tomorrowBookings(){
+  const t1=new Date(); t1.setDate(t1.getDate()+1); t1.setHours(0,0,0,0);
+  return bookings.filter(b=>b.status==='confirmed' && sameDay(b.date,t1)).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+}
+function showTomorrowReminders(){
+  const list = tomorrowBookings();
+  const t1=new Date(); t1.setDate(t1.getDate()+1);
+  const dLabel = t1.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
+  if(!list.length){ toast('No hay citas confirmadas para mañana'); return; }
+  const rows = list.map(b=>{
+    const done = b.reminded ? ' reminded' : '';
+    return '<div class="rem-row'+done+'" data-rid="'+b.id+'"><div class="rr-info"><div class="rr-n">'+b.name+(b.reminded?' <span class="rr-chk">✓ enviado</span>':'')+'</div><div class="rr-s">'+b.time+' hrs · '+b.service+'</div></div><button class="btn btn-gold btn-sm rr-send" data-rsend="'+b.id+'">'+(b.reminded?'Reenviar':'Enviar')+'</button></div>';
+  }).join('');
+  document.getElementById('modal-content').innerHTML = '<h3>Recordatorios de <i>mañana</i></h3><p class="ct">'+dLabel+' · '+list.length+' cita'+(list.length>1?'s':'')+'. Toca <b>Enviar</b> y se abre WhatsApp con el mensaje listo.</p><div class="rem-rows">'+rows+'</div><div class="modal-act"><button class="btn btn-g btn-sm" id="rem-close" style="background:rgba(74,54,38,.04);flex:1">Cerrar</button><button class="btn btn-gold btn-sm" id="rem-all" style="flex:2">Abrir todos por turno</button></div>';
+  document.getElementById('modal').classList.add('on');
+  document.getElementById('rem-close').addEventListener('click',closeModal);
+  function sendOne(b){
+    const msg = buildWaTemplates(b).remind;
+    const num = waDigits(b.phone);
+    if(num) window.open('https://wa.me/'+num+'?text='+msg,'_blank');
+    if(!b.reminded){ b.reminded=true; saveB(); cloudSyncBooking(b); }
+  }
+  document.querySelectorAll('[data-rsend]').forEach(btn=>btn.addEventListener('click',()=>{
+    const b=bookings.find(x=>x.id===btn.dataset.rsend); if(!b) return;
+    sendOne(b);
+    const row=btn.closest('.rem-row'); if(row){ row.classList.add('reminded'); }
+    btn.textContent='Reenviar';
+    if(!row.querySelector('.rr-chk')){ const n=row.querySelector('.rr-n'); if(n) n.innerHTML+=' <span class="rr-chk">✓ enviado</span>'; }
+  }));
+  document.getElementById('rem-all').addEventListener('click',()=>{
+    let i=0; list.forEach(b=>{ setTimeout(()=>sendOne(b), i*600); i++; });
+    toast('Abriendo WhatsApp para cada clienta…');
+  });
+}
+const _agRemind = document.getElementById('ag-remind');
+if(_agRemind) _agRemind.addEventListener('click', showTomorrowReminders);
 
 /* ===== GALERÍA (antes/después) + ENLACES ===== */
+let _webpOK=null;
+function canEncodeWebp(){ if(_webpOK!==null) return _webpOK; try{ const c=document.createElement('canvas'); c.width=c.height=2; _webpOK = c.toDataURL('image/webp').indexOf('image/webp')===5; }catch(e){ _webpOK=false; } return _webpOK; }
+function canvasToData(cv, q){ try{ return canEncodeWebp() ? cv.toDataURL('image/webp', q) : cv.toDataURL('image/jpeg', q); }catch(e){ try{ return cv.toDataURL('image/jpeg', q); }catch(_){ return null; } } }
+document.addEventListener('load', function(e){ const img=e.target; if(img && img.tagName==='IMG'){ const p=img.parentNode; if(p && p.classList) p.classList.add('imgloaded'); } }, true);
 function imgResize(file, maxW, cb){
   try{
     const img = new Image();
@@ -3288,7 +3413,7 @@ function imgResize(file, maxW, cb){
       const hh = Math.max(1,Math.round((img.naturalHeight||maxW)*scale));
       const cv = document.createElement('canvas'); cv.width=w; cv.height=hh;
       cv.getContext('2d').drawImage(img,0,0,w,hh);
-      let out=null; try{ out = cv.toDataURL('image/jpeg',0.82); }catch(e){ out=null; }
+      let out=canvasToData(cv,0.8);
       try{ URL.revokeObjectURL(img.src); }catch(e){}
       cb(out);
     };
@@ -3321,7 +3446,7 @@ function openCropper(src, aspW, aspH, outW, cb){
     const cv=document.createElement('canvas'); cv.width=outW; cv.height=outH;
     const ctx=cv.getContext('2d'); ctx.fillStyle='#000'; ctx.fillRect(0,0,outW,outH);
     ctx.drawImage(im, ox*s, oy*s, iw*cover*zoom*s, ih*cover*zoom*s);
-    let out=null; try{ out=cv.toDataURL('image/jpeg',0.8); }catch(e){ out=null; }
+    let out=canvasToData(cv,0.82);
     bg.remove(); cb(out);
   });
 }
@@ -3431,7 +3556,7 @@ let _fbApp=null, _fbDb=null, _fbFs=null, fbStatus='off';
 const DEFAULT_FB={apiKey:"AIzaSyC9OaifNgowpa_UqANa_iXU_uotJTllw48",authDomain:"yuvia-beauty.firebaseapp.com",projectId:"yuvia-beauty",storageBucket:"yuvia-beauty.firebasestorage.app",messagingSenderId:"55028328330"};
 function getFbCfg(){ try{ const c=JSON.parse(localStorage.getItem('yh:fbcfg')||'null'); if(c&&c.projectId) return c; }catch(e){} return DEFAULT_FB; }
 function setFbCfg(c){ try{ localStorage.setItem('yh:fbcfg', JSON.stringify(c)); }catch(e){} }
-const LS_KEY={services:'yh:services',staff:'yh:staff',gallery:'yh:gallery',bookings:'yh:bookings',reviews:'yh:reviews',expenses:'yh:expenses',blocks:'yh:blocks'};
+const LS_KEY={services:'yh:services',staff:'yh:staff',gallery:'yh:gallery',bookings:'yh:bookings',reviews:'yh:reviews',expenses:'yh:expenses',blocks:'yh:blocks',slots:'yh:slots'};
 const FB_COLS=[
   ['services',()=>SERVICES,a=>{SERVICES=a;}],
   ['staff',()=>STAFF,a=>{STAFF=a;}],
@@ -3439,7 +3564,8 @@ const FB_COLS=[
   ['bookings',()=>bookings,a=>{bookings=a;}],
   ['reviews',()=>reviews,a=>{reviews=a;}],
   ['expenses',()=>expenses,a=>{expenses=a;}],
-  ['blocks',()=>blocks,a=>{blocks=a;}]
+  ['blocks',()=>blocks,a=>{blocks=a;}],
+  ['slots',()=>busySlots,a=>{busySlots=a;}]
 ];
 function colGet(name){ const c=FB_COLS.find(x=>x[0]===name); return c?c[1]():[]; }
 function persistLocal(name){ try{ localStorage.setItem(LS_KEY[name], JSON.stringify(colGet(name))); }catch(e){} }
@@ -3466,15 +3592,48 @@ function updateCloudStatus(msg){
 async function pushCol(name){
   if(!_fbDb||!_fbFs) return;
   const fs=_fbFs, arr=colGet(name);
+  const upsertOnly = (name==='bookings'); // las clientas pueden tener solo SUS citas — nunca borrar las demás
   try{
     arr.forEach((x,i)=>{ if(x.id==null) x.id=name+'_'+Date.now()+'_'+i; });
     const batch=fs.writeBatch(_fbDb);
-    const existing=await fs.getDocs(fs.collection(_fbDb,name));
-    const ids=new Set(arr.map(x=>String(x.id)));
-    existing.forEach(d=>{ if(!ids.has(d.id)) batch.delete(d.ref); });
+    if(!upsertOnly){
+      const existing=await fs.getDocs(fs.collection(_fbDb,name));
+      const ids=new Set(arr.map(x=>String(x.id)));
+      existing.forEach(d=>{ if(!ids.has(d.id)) batch.delete(d.ref); });
+    }
     arr.forEach(x=>{ batch.set(fs.doc(_fbDb,name,String(x.id)), JSON.parse(JSON.stringify(x))); });
     await batch.commit();
   }catch(e){ updateCloudStatus(e.message); }
+}
+async function cloudUpsert(name, obj){ if(!_fbDb||!_fbFs||!obj||obj.id==null) return; try{ await _fbFs.setDoc(_fbFs.doc(_fbDb,name,String(obj.id)), JSON.parse(JSON.stringify(obj))); }catch(e){} }
+async function cloudRemove(name, id){ if(!_fbDb||!_fbFs||id==null) return; try{ await _fbFs.deleteDoc(_fbFs.doc(_fbDb,name,String(id))); }catch(e){} }
+async function cloudWipe(name){ if(!_fbDb||!_fbFs) return; try{ const snap=await _fbFs.getDocs(_fbFs.collection(_fbDb,name)); const batch=_fbFs.writeBatch(_fbDb); snap.forEach(d=>batch.delete(d.ref)); await batch.commit(); }catch(e){} }
+function slotFromBooking(b){ return {id:b.id, specialistId:b.specialistId, date:b.date, time:b.time, dur:svcDurationById(b.serviceId), status:b.status}; }
+function cloudSyncBooking(b){
+  if(!b) return;
+  // slot sin datos personales para TODAS (disponibilidad). Cita completa solo en 'bookings' (admin).
+  if(b.status==='cancelled'){ const i=busySlots.findIndex(x=>x.id===b.id); if(i>=0){ busySlots.splice(i,1); persistLocal('slots'); } cloudRemove('slots', b.id); }
+  else { const sd=slotFromBooking(b); const i=busySlots.findIndex(x=>x.id===b.id); if(i>=0) busySlots[i]=sd; else busySlots.push(sd); persistLocal('slots'); cloudUpsert('slots', sd); }
+  cloudUpsert('bookings', b);
+}
+let _backfilled=false;
+async function fetchMyBookings(phone){
+  if(!_fbDb||!_fbFs||!phone) return;
+  try{
+    const snap=await _fbFs.getDocs(_fbFs.query(_fbFs.collection(_fbDb,'bookings'), _fbFs.where('phone','==',phone)));
+    snap.forEach(d=>{ const b=d.data(); const i=bookings.findIndex(x=>String(x.id)===String(b.id)); if(i>=0) bookings[i]=b; else bookings.push(b); });
+    saveB();
+  }catch(e){}
+}
+function backfillSlots(){
+  if(_backfilled || !_fbDb) return; _backfilled=true;
+  try{
+    const today=new Date(); today.setHours(0,0,0,0);
+    const have=new Set(busySlots.map(s=>String(s.id)));
+    bookings.filter(b=>b.status!=='cancelled' && new Date(b.date)>=today && !have.has(String(b.id)))
+      .forEach(b=>{ const sd=slotFromBooking(b); busySlots.push(sd); cloudUpsert('slots', sd); });
+    persistLocal('slots');
+  }catch(e){}
 }
 async function pushInfo(){ if(!_fbDb||!_fbFs) return; try{ await _fbFs.setDoc(_fbFs.doc(_fbDb,'salon','info'), JSON.parse(JSON.stringify(INFO))); }catch(e){ updateCloudStatus(e.message); } }
 const _subbed={};
@@ -3522,7 +3681,9 @@ async function initCloud(){
     await subscribeCol('services'); await subscribeCol('staff');
     rerenderAll();
     fbStatus='on'; updateCloudStatus();
-    if(adminLoggedIn){ ['bookings','gallery','reviews','expenses','blocks'].forEach(subscribeCol); }
+    // TODAS: disponibilidad sin datos personales (slots) + bloqueos. Las citas con datos personales SOLO para admin.
+    subscribeCol('slots'); subscribeCol('blocks');
+    if(adminLoggedIn){ ['bookings','gallery','reviews','expenses'].forEach(subscribeCol); setTimeout(backfillSlots, 2500); }
   }catch(e){ fbStatus='error'; updateCloudStatus(e&&e.message); }
 }
 function showCloudModal(){
@@ -3549,7 +3710,7 @@ function showCloudModal(){
   const wrap=(origName, getOrig, pushFn)=>{};
   const _saveS=saveS; saveS=function(){ _saveS.apply(this,arguments); if(_fbDb) pushCol('services'); };
   const _saveT=saveT; saveT=function(){ _saveT.apply(this,arguments); if(_fbDb) pushCol('staff'); };
-  const _saveB=saveB; saveB=function(){ _saveB.apply(this,arguments); if(_fbDb) pushCol('bookings'); };
+  /* bookings se sincronizan POR DOCUMENTO (cloudUpsert/cloudRemove) en cada cambio — evita el límite de 500 del batch y la pérdida de datos */
   const _saveI=saveI; saveI=function(){ _saveI.apply(this,arguments); if(_fbDb) pushInfo(); };
   if(typeof saveGallery==='function'){ const _g=saveGallery; saveGallery=function(){ const r=_g.apply(this,arguments); if(_fbDb) pushCol('gallery'); return r; }; }
   if(typeof saveReviews==='function'){ const _r=saveReviews; saveReviews=function(){ _r.apply(this,arguments); if(_fbDb) pushCol('reviews'); }; }
